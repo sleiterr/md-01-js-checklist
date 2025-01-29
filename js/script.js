@@ -1,5 +1,6 @@
 const toDoContainer = document.querySelector(".to-do-list");
 
+// array
 let toDoArray = [
   "Brush teeth",
   "Make the bed",
@@ -9,14 +10,21 @@ let toDoArray = [
 ];
 
 const renderList = () => {
+  // update-clean list
   toDoContainer.innerHTML = "";
 
-  toDoArray.forEach((listItem) => {
+  toDoArray.forEach((listItem, index) => {
     toDoContainer.innerHTML += `
-    <p class='list-item'>${listItem}<button class="check">check</button></p>
+    <p class='list-item'>${listItem}
+    <button class="check">check</button>
+    
+    <button class='bttn-delete' data-index='${index}'>delete</button></p>
     `;
+    //* index help delete item
   });
+
   checkedItem();
+  deleteItem();
 };
 
 const checkedItem = () => {
@@ -33,30 +41,43 @@ const checkedItem = () => {
 
 /* Add to list */
 
-const btnAddItem = document.querySelector(".btn-add-item");
-const input = document.querySelector("#input");
+const addItem = () => {
+  const btnAddItem = document.querySelector(".btn-add-item");
+  const input = document.querySelector("#input");
 
-btnAddItem.addEventListener("click", () => {
-  const newItem = input.value;
-  toDoArray.push(newItem);
-  input.value = "";
-  //   console.log(toDoArray);
+  btnAddItem.addEventListener("click", () => {
+    const newItem = input.value.trim();
 
-  saveData();
-  renderList();
-  checkedItem();
-});
+    if (newItem === "") return; // check for empty input
 
-function saveData() {
-  localStorage.setItem("toDoList", JSON.stringify(toDoArray)); // saved object toDoArray
-}
+    //   console.log(toDoArray);
+    toDoArray.push(newItem);
 
-function loadData() {
-  const savedList = localStorage.getItem("toDoList");
-  if (savedList) {
-    toDoArray = JSON.parse(savedList);
+    // saveData();
     renderList();
-  }
+    input.value = "";
+  });
+};
+
+addItem();
+
+function deleteItem() {
+  const btnDelete = document.querySelectorAll(".bttn-delete");
+
+  btnDelete.forEach((bttn) => {
+    bttn.addEventListener("click", () => {
+      const index = bttn.getAttribute("data-index");
+
+      toDoArray.splice(index, 1);
+      // saveData();
+      renderList();
+      // bttn.classList.add("hidden");
+    });
+  });
 }
 
-loadData();
+
+
+window.onload = () => {
+  renderList();
+};
